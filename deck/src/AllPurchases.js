@@ -36,13 +36,6 @@ class AllPurchases extends Component{
                     <th style={commonStyle}>Bill No</th>
                     <th style={commonStyle}>Date</th>
                     <th style={commonStyle}>Bill Value</th>
-                    <th style={commonStyle}>Sales 145</th>
-                    <th style={commonStyle}>Sales 125</th>
-                    <th style={commonStyle}>SAT 2</th>
-                    <th style={commonStyle}>Sales 5</th>
-                    <th style={commonStyle}>Vat 4</th>
-                    <th style={commonStyle}>Sat 1</th>
-                    <th style={commonStyle}>Round Off</th>
                 </thead>
                 <tbody>{this.state.data.map((row)=>{
                 return <DataRow data={row} key={row['id']} />})}</tbody></table>
