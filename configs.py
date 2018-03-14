@@ -1,22 +1,22 @@
 configs = {
     'cad' : {
-        'start' : '7',
+        'start' : '9',
         'get': {
         'billno' : 'B',
-        'date' : 'A',
-        'party' : 'C',
-        'tinno' : 'D',
-        'billvalue' : 'R',
+        'date' : 'C',
+        'party' : 'D',
+        'tinno' : '',
+        'billvalue' : 'E',
         },
-        'end' : '1'
+        'end' : '9'
     },
     'col' : {
         'start' : '2',
         'get' : {
         'billno' : 'E',
         'date' : 'B',
-        'party' : 'K',
-        'tinno' : 'L',
+        'party' : 'G',
+        'tinno' : '',
         'billvalue' : 'AB',
         },
         'end' : '1'

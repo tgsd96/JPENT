@@ -125,17 +125,22 @@ class DownloadPurchase(Resource):
         dates = parser.parse_args()
         if(purchase=='list'):
             sql = '''
+                SELECT A.*,SUM(B.billvalue) total from (
                 SELECT * 
                 FROM crosstab(
-                'select distinct custid,interface_code,sum(billvalue) 
+                'select  custid,interface_code,sum(billvalue) 
                 FROM PURCHASES 
                 WHERE date>='%s'
                 and date<='%s'
                 group by custid,interface_code order by 1,2','
                 SELECT DISTINCT INTERFACE_CODE from master_list order by 1')
-                AS ct(cust_id int, CAD float, COL float, GOD float, MAR float, MARG float)
+                AS ct(cust_id int, CAD float, COL float, GOD float, MAR float, MARG float)) A,
+                PURCHASES B where A.cust_id = B.custid
+                and B.date>=%s and B.date<=%s
+                group by A.cust_id, A.cad, A.col, A.god, A.mar, A.marg
+                order by A.cust_id
                 '''
-            result = db.engine.execute(sql,(dates.startDate,dates.endDate))
+            result = db.engine.execute(sql,(dates.startDate,dates.endDate,dates.startDate,dates.endDate))
             for row in result:
                 getNameQuery = MasterList.query.filter_by(cust_id = row.cust_id).first()
                 name = getNameQuery.name
@@ -147,13 +152,14 @@ class DownloadPurchase(Resource):
                     row.marg,
                     row.god,
                     row.mar,
-                    row.cad
+                    row.cad,
+                    row.total
                 ]
                 responseList.append(listList)
             wb = op.Workbook()
             ws1 = wb.active
             ws1.title = "List"
-            ws1.append(['name','customer id', 'COLGATE', 'MARG', 'GODREJ','MARICO','CADBURY'])
+            ws1.append(['name','customer id', 'COLGATE', 'MARG', 'GODREJ','MARICO','CADBURY','Total'])
             for purchase in responseList:
                 ws1.append(purchase)
             wb.save(filename=DestFileName)
@@ -379,6 +385,8 @@ def store(filename,company):
             getcustid = MasterList.query.filter_by(name=Purchases[i]['party']).first()
             if company=='marg':
                 Purchases[i]['date'] = datetime.datetime.strptime(Purchases[i]['date'],'%d-%m-%y').strftime('%Y-%m-%d')
+            if company=='cad':
+                Purchases[i]['date'] = datetime.datetime.strptime(Purchases[i]['date'],'%d/%m/%Y').strftime('%Y-%m-%d')
             if getcustid is not None:
                 custid = getcustid.cust_id   
             else:
