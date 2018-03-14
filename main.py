@@ -66,29 +66,6 @@ class ErrorPurchases(db.Model):
 
 
 #API classes
-class viewPurchases(Resource):
-    #get method of this API point
-    def get(self):
-        purchasesList = []
-        allPurchases = PurchaseTable.query.all()
-        for each in allPurchases:
-            if each.custid == -1 : 
-                name='Unknown'
-            else:
-                getNameQuery = MasterList.query.filter_by(cust_id = each.custid).first()
-                name = getNameQuery.name
-            purchaseDict = {
-                'id' : str(each.id),
-                'custid' : str(each.custid),
-                'billno' : str(each.billno),
-                'interface_code':str(each.interface_code),
-                'date' : str(each.date),
-                'party' : name,
-                'billvalue' : str(each.billvalue),
-            }
-            purchasesList.append(purchaseDict)
-        return purchasesList
-
 class uploadFile(Resource):
     def post(self,company):
         if 'upload' not in request.files:
@@ -102,11 +79,6 @@ class uploadFile(Resource):
         db.session.add(newFile)
         db.session.commit()
         file.save(os.path.join(UPLOAD_FOLDER,f_name))
-        # store()
-        # with app.app_context():
-        #     thread.start_new_thread(store,(os.path.join(UPLOAD_FOLDER,f_name),company))
-        # return "ok"
-        # call store
         s_count, e_count = store(os.path.join(UPLOAD_FOLDER,f_name),company)
         return {
             'success' : s_count,
@@ -115,7 +87,6 @@ class uploadFile(Resource):
 
 
 ## download purchases api.
-
 class DownloadPurchase(Resource):
     def get(self,purchase):
         parser = reqparse.RequestParser()
@@ -188,11 +159,7 @@ class DownloadPurchase(Resource):
                 ws1.append(purchase.values())
             wb.save(filename=DestFileName)
         return send_from_directory(UPLOAD_FOLDER,DestFileName)
-        
 
-    # for row in cursor:
-        
-        
 class DownloadFile(Resource):
     
     def get(self):
@@ -347,15 +314,11 @@ class AccountDetails(Resource):
         db.engine.execute(updateSQL,(new_id,old_id))
         db.engine.execute(updatePurchases,(new_id,old_id))
         db.session.commit()
-
-
-        
         return "ok"
 
 #api Endpoints
 api.add_resource(viewPurchases, '/view')
 api.add_resource(uploadFile, '/upload/<company>')
-# api.add_resource(DownloadFile,'/download')
 api.add_resource(DownloadPurchase,'/download/<purchase>')
 api.add_resource(ErrorHandler,'/errors')
 api.add_resource(AccountHandler,'/accounts')
@@ -404,13 +367,8 @@ def store(filename,company):
             Purchases[i]['custid'] = custid
             Purchases[i].pop('party')
             Purchases[i].pop('tinno')
-            # Purchases[i].pop('date')
             Purchases[i]['interface_code']=company
             currentPurchase = Purchases[i]
-            # placeholders = ', '.join(["%s"] * len(purchases[i]))
-            # table = "purchases"
-            # columns = ', '.join(purchases[i].keys())
-            # sql = ("INSERT INTO %s ( %s ) VALUES ( %s )" % (table, columns, placeholders))
             purchase = PurchaseTable(
                 custid = currentPurchase['custid'],
                 interface_code = currentPurchase['interface_code'].upper(),
