@@ -1,5 +1,4 @@
-/JPENT
-/JPENT2
-/deck2
-/jpdash
-/jpdeck
+jpdash*
+venv*
+*.xlsx     
+__pycache__ 

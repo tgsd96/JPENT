@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row,Col,Radio,Upload, Icon, Button, Alert } from 'antd';
+import { Row,Col,Radio,Upload, Icon, Button, Alert, DatePicker } from 'antd';
 
 const RadioGroup = Radio.Group;
 const Dragger = Upload.Dragger;
@@ -18,6 +18,8 @@ export default class Uploader extends Component {
         const { file } = this.state;
         const formData = new FormData();
         formData.append('upload',file,file.name);
+        formData.append('skipRows', 2);
+        // formData.append('date',this.state.uploadDate);
         this.setState({ uploading: true });
         this.setState({completed: false})
         const company = this.state.selection
@@ -28,7 +30,9 @@ export default class Uploader extends Component {
                  this.setState({ completed : true});
                  this.setState({uploading :false});
                  const resp = JSON.parse(xhr.response);
-                 this.setState({ errorCount:resp.error, successCount:resp.success})
+                 console.log(resp)
+                 this.props.update(resp.file, resp.keys, company,this.state.uploadDate);
+                //  this.setState({ keyCols : resp.keys })
                  console.log(this.state);
             }else{
                  this.setState({completed : false});
@@ -37,13 +41,22 @@ export default class Uploader extends Component {
         xhr.send(formData);
 
     }
+    handleDate = (date,dateString)=>{
+        console.log(dateString)
+        this.setState({
+            uploadDate:  dateString,
+        })
+    }
     render() {
         return (
-            <Col span={12} style={styles.uploader} className='uploader'>
+            <Col span={8} style={styles.uploader} className='uploader'>
                 <Row>
                     <Col span={12} >
                         <h3>Upload purchases</h3>
                     </Col>
+                </Row>
+                <Row>
+                <DatePicker onChange={this.handleDate} />
                 </Row>
                 <Row>
                     <p>Choose Company</p>
@@ -74,16 +87,16 @@ export default class Uploader extends Component {
                 </Button>
                 </Upload>
                 </Row>
-                <Row type='flex' justify='space-around'>
+                <Row type='flex' justify='end'>
                     <Button onClick={()=>this.handleSubmit()} loading={this.state.uploading}>
-                        Submit
+                        Next
                         <Icon type="send" />
                     </Button>
                 </Row>
-                <Row style={{marginTop: 10}}>
-                    <Alert message={`${this.state.successCount} correct insertions`} type='success'/>
-                    <Alert message={`${this.state.errorCount} error while inserting`} type='error'/>
-                </Row>
+                {/* <Row style={{marginTop: 10, padding: 10}}>
+                    <Alert style={{margin: 10}} message={`${this.state.successCount} correct insertions`} type='success'/>
+                    <Alert style={{margin: 10}} message={`${this.state.errorCount} error while inserting`} type='error'/>
+                </Row> */}
             </Col>
         );
     }
@@ -92,10 +105,11 @@ export default class Uploader extends Component {
 const styles = {
     uploader: {
         backgroundColor: '#FFFFFF',
-        height: 350,
+        height: 600,
         borderRadius: 12,
         margin: 3,
         boxShadow: '0 2px 4px 0 rgba(0,0,0,0.50)',
         padding: 10,
-    }
+    },
+    
 }

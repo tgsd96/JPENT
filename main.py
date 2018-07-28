@@ -8,14 +8,16 @@ import uuid
 import datetime
 import openpyxl as op
 import random
-from configs import configs;
+from configs import configs
+import pandas as pd
+import math
 
 #App configs
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
-UPLOAD_FOLDER = '/Users/tushargarg/Desktop/JPENT'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/jpent'
+UPLOAD_FOLDER ='C:\\Users\\abcd\\Desktop\\JPENT'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://tushargarg:colgate@localhost/jpent'
 DestFileName = 'result.xlsx'
 db = SQLAlchemy(app)
 
@@ -73,18 +75,33 @@ class uploadFile(Resource):
             response.message = "No file given"
             return response
         file = request.files['upload']
+        # print(request.form["skipRows"])
+        # date = req["date"]
+    
         ext = os.path.splitext(file.filename)[1]
         f_name = str(uuid.uuid4())+ext
         newFile = uploaded(UPLOAD_FOLDER,file.filename,f_name,company)
         db.session.add(newFile)
         db.session.commit()
         file.save(os.path.join(UPLOAD_FOLDER,f_name))
-        s_count, e_count = store(os.path.join(UPLOAD_FOLDER,f_name),company)
+        keys = retrieveColumns(os.path.join(UPLOAD_FOLDER,f_name))
+        # s_count, e_count = store(os.path.join(UPLOAD_FOLDER,f_name),company)
+        # return {
+        #     'success' : s_count,
+        #     'error' : e_count
+        # }
         return {
-            'success' : s_count,
-            'error' : e_count
+            'file' : f_name,
+            'keys' : keys,
         }
-
+        # return {}
+    def put(self,company):
+        conf = request.json
+        print(conf)
+        filename = conf["filename"]
+        val = storeWithPandas(filename, conf)
+        return { 'status' : val }
+    
 
 ## download purchases api.
 class DownloadPurchase(Resource):
@@ -96,41 +113,50 @@ class DownloadPurchase(Resource):
         dates = parser.parse_args()
         if(purchase=='list'):
             sql = '''
+                SELECT COALESCE(S.CUST_ID, BS.CUST_ID) AS CUST_ID, S.cad,S.col,S.god,S.mar,S.marg,S.total, BS.DEBIT AS OLD FROM (
                 SELECT A.*,SUM(B.billvalue) total from (
                 SELECT * 
                 FROM crosstab(
-                'select  custid,interface_code,sum(billvalue) 
+                'select  custid,interface_code,string_agg((billvalue::numeric)::text,''|'')
                 FROM PURCHASES 
                 WHERE date>='%s'
                 and date<='%s'
                 group by custid,interface_code order by 1,2','
                 SELECT DISTINCT INTERFACE_CODE from master_list order by 1')
-                AS ct(cust_id int, CAD float, COL float, GOD float, MAR float, MARG float)) A,
+                AS ct(cust_id int, CAD text, COL text, GOD text, MAR text, MARG text)) A,
                 PURCHASES B where A.cust_id = B.custid
                 and B.date>=%s and B.date<=%s
-                group by A.cust_id, A.cad, A.col, A.god, A.mar, A.marg
-                order by A.cust_id
+                group by A.cust_id, A.cad, A.col, A.god, A.mar, A.marg) S
+                FULL OUTER JOIN
+                BALANCE_SHEET BS
+                ON S.CUST_ID = BS.CUST_ID
                 '''
             result = db.engine.execute(sql,(dates.startDate,dates.endDate,dates.startDate,dates.endDate))
             for row in result:
+                # print(row.cust_id);
                 getNameQuery = MasterList.query.filter_by(cust_id = row.cust_id).first()
+                if getNameQuery == None:
+                    print(row.cust_id)
+                    continue
                 name = getNameQuery.name
+                area = getNameQuery.area
                 # print(row['cust_id'])
                 listList = [
                     name,
-                    row.cust_id,
+                    area,
                     row.col,
                     row.marg,
                     row.god,
                     row.mar,
                     row.cad,
-                    row.total
+                    row.total,
+                    row.old
                 ]
                 responseList.append(listList)
             wb = op.Workbook()
             ws1 = wb.active
             ws1.title = "List"
-            ws1.append(['name','customer id', 'COLGATE', 'MARG', 'GODREJ','MARICO','CADBURY','Total'])
+            ws1.append(['Name','Beat', 'COLGATE', 'MARG', 'GODREJ','MARICO','CADBURY','Total','OLD'])
             for purchase in responseList:
                 ws1.append(purchase)
             wb.save(filename=DestFileName)
@@ -242,7 +268,7 @@ class AccountHandler(Resource):
         parser.add_argument('name',type=str)
         name = parser.parse_args()
         selectSql = '''
-            select distinct cust_id, name, interface_code from master_list where UPPER(name) like %s
+            select  cust_id, name, interface_code from master_list where UPPER(name) like %s order by cust_id
         '''
         key = name.name.upper()+"%"
         result = db.engine.execute(selectSql,key)
@@ -317,7 +343,6 @@ class AccountDetails(Resource):
         return "ok"
 
 #api Endpoints
-api.add_resource(viewPurchases, '/view')
 api.add_resource(uploadFile, '/upload/<company>')
 api.add_resource(DownloadPurchase,'/download/<purchase>')
 api.add_resource(ErrorHandler,'/errors')
@@ -325,6 +350,55 @@ api.add_resource(AccountHandler,'/accounts')
 api.add_resource(AccountDetails,'/accounts/details')
 
 # Storing function
+
+
+def retrieveColumns(filename):
+    # print("Skip rows are: %d "%int(skipRows))
+    sheet = pd.read_excel(filename)
+    return list(sheet.keys())
+
+def storeWithPandas(filename,conf):
+    with app.app_context():
+        success_count = 0
+        error_count = 0
+        sheet = pd.read_excel(filename)
+        sheet = sheet.fillna('')
+        Purch = []
+        company = conf["company"]
+        date = conf["date"]
+        for row in sheet.itertuples():
+            purchases= {}
+            purchases['name']=row[conf["name"]+1]
+            purchases['billvalue']=round(row[conf["billvalue"]+1])
+            Purch.append(purchases)
+        for x in Purch:
+                print(x)
+                custid = -1
+                getcustid = MasterList.query.filter_by(name=x['name']).first()
+                if getcustid is not None:
+                    custid = getcustid.cust_id
+                else:
+                    error_count += 1
+                    newError = ErrorPurchases(
+                        name = x['name'],
+                        interface_code = company.upper(),
+                        billvalue = x['billvalue'],
+                        date = date
+                    ) 
+                    db.session.add(newError)
+                    db.session.commit()
+                    continue
+                purchases = PurchaseTable(
+                    custid = custid,
+                    interface_code = company.upper(),
+                    billvalue = x['billvalue'],
+                    date = date
+                )
+                db.session.add(purchases)
+                success_count += 1
+                db.session.commit()
+        return (success_count,error_count)
+
 
 def store(filename,company):
     with app.app_context():

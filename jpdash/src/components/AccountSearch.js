@@ -51,7 +51,7 @@ export default class AccountSearch extends Component {
                      />
                 </Row>
                 <Row>
-                    <Table dataSource={this.props.accounts} columns={Columns} />
+                    <Table dataSource={this.props.accounts}  columns={Columns} />
 
                 </Row>
             </Col>

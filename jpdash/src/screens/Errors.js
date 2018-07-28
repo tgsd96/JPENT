@@ -36,6 +36,7 @@ export default class ErrorPage extends Component {
             console.log(err);
         }
         this.setState({uploading: false})
+        this.forceUpdate();
     }
 
     handleRadioChange = (name, custid)=>{

@@ -13,12 +13,14 @@ export default class Accounts extends Component {
         selectedID: '',
         selectedIC: '',
         selected : {},
+        searchTerm :'',
     }
     componentWillMount(){
         this.retrieveAccounts('');
     }
     retrieveAccounts = async (name) =>{
         const resp = await Axios.get(ACCOUNT_URL+`?name=${name}`);
+        this.setState({searchTerm:name})
         console.log(name);
         this.setState({ accounts: resp.data});
         // console.log(this.state.accounts);
@@ -27,7 +29,7 @@ export default class Accounts extends Component {
     updateID = async(orig,newID) =>{
         const resp = await Axios.put(ACCOUNT_URL+'/details',{ cust_id: orig, new_cust_id: newID })
         console.log(resp.data);
-        this.retrieveAccounts('');
+        this.retrieveAccounts(this.state.searchTerm);
         this.setState({ selected: {}});
         // this.forceUpdate()
     }

@@ -8,7 +8,7 @@ configs = {
         'tinno' : '',
         'billvalue' : 'E',
         },
-        'end' : '9'
+        'end' : '2'
     },
     'col' : {
         'start' : '2',
@@ -17,7 +17,7 @@ configs = {
         'date' : 'B',
         'party' : 'G',
         'tinno' : '',
-        'billvalue' : 'AB',
+        'billvalue' : 'H',
         },
         'end' : '1'
     },
@@ -28,20 +28,20 @@ configs = {
         'date' : 'C',
         'party' : 'I',
         'tinno' : '',
-        'billvalue' : 'Z',
+        'billvalue' : 'J',
         },
         'end' : '0'
     },
     'mar' : {
-        'start' : '4',
+        'start' : '3',
         'get' : {
-        'billno' : 'A',
+        'billno' : '',
         'date' : 'D',
-        'party' : 'I',
+        'party' : 'A',
         'tinno' : '',
-        'billvalue' : 'AA',
+        'billvalue' : 'C',
         },
-        'end' : '0'
+        'end' : '-1'
     },
     'marg':{
         'start' : '9',
