@@ -103,3 +103,4 @@ widgetsnbextension        2.0.0                    py27_0
 wrapt                     1.10.10                   <pip>
 zeromq                    4.1.5                         0  
 zlib                      1.2.8                         3  
+pandas

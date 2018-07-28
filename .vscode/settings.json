@@ -1,4 +1,4 @@
 {
     "python.linting.pylintEnabled": false,
-    "git.ignoreLimitWarning": true
+    "python.pythonPath": "C:\\Users\\abcd\\Miniconda3\\python.exe"
 }

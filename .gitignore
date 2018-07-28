@@ -1,7 +1,8 @@
-node_modules
+jpdash*
+venv*
+*.xlsx     
+__pycache__ 
+.vscode
 jpdash
 venv
-jpdeck
-deck
-git
 *.xlsx
