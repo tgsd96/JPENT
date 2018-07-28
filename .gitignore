@@ -1,8 +1,4 @@
-jpdash*
 venv*
 *.xlsx     
-__pycache__ 
+__pycache__*
 .vscode
-jpdash
-venv
-*.xlsx

@@ -1,106 +1,79 @@
-# packages in environment at /home/tushar/miniconda2/envs/jp:
-#
-aniso8601                 1.2.1                     <pip>
-astroid                   1.5.3                     <pip>
-backports                 1.0                      py27_0  
-backports.functools-lru-cache 1.4                       <pip>
-backports_abc             0.5                      py27_0  
-bleach                    1.5.0                    py27_0  
-click                     6.7                      py27_0  
-configparser              3.5.0                    py27_0  
-dbus                      1.10.10                       0  
-decorator                 4.0.11                   py27_0  
-entrypoints               0.2.2                    py27_1  
-enum34                    1.1.6                    py27_0  
-et_xmlfile                1.0.1                    py27_0  
-expat                     2.1.0                         0  
-flask                     0.12.2                   py27_0  
-Flask-Cors                3.0.2                     <pip>
-Flask-RESTful             0.3.6                     <pip>
-flask-sqlalchemy          2.2                      py27_1    conda-forge
-fontconfig                2.12.1                        3  
-freetype                  2.5.5                         2  
-functools32               3.2.3.2                  py27_0  
-get_terminal_size         1.0.0                    py27_0  
-glib                      2.50.2                        1  
-gst-plugins-base          1.8.0                         0  
-gstreamer                 1.8.0                         0  
-html5lib                  0.999                    py27_0  
-icu                       54.1                          0  
-ipykernel                 4.6.1                    py27_0  
-ipython                   5.3.0                    py27_0  
-ipython_genutils          0.2.0                    py27_0  
-ipywidgets                6.0.0                    py27_0  
-isort                     4.2.15                    <pip>
-itsdangerous              0.24                     py27_0  
-jdcal                     1.3                      py27_0  
-jinja2                    2.9.6                    py27_0  
-jpeg                      9b                            0  
-jsonschema                2.6.0                    py27_0  
-jupyter                   1.0.0                    py27_3  
-jupyter_client            5.0.1                    py27_0  
-jupyter_console           5.1.0                    py27_0  
-jupyter_core              4.3.0                    py27_0  
-lazy-object-proxy         1.3.1                     <pip>
-libffi                    3.2.1                         1  
-libgcc                    5.2.0                         0  
-libiconv                  1.14                          0  
-libpng                    1.6.27                        0  
-libsodium                 1.0.10                        0  
-libxcb                    1.12                          1  
-libxml2                   2.9.4                         0  
-markupsafe                0.23                     py27_2  
-MarkupSafe                1.0                       <pip>
-mccabe                    0.6.1                     <pip>
-mistune                   0.7.4                    py27_0  
-mysql-connector-python    2.0.4                    py27_0  
-MySQL-python              1.2.5                     <pip>
-nbconvert                 5.2.1                    py27_0  
-nbformat                  4.3.0                    py27_0  
-notebook                  5.0.0                    py27_0  
-openpyxl                  2.4.7                    py27_0  
-openssl                   1.0.2l                        0  
-pandocfilters             1.4.1                    py27_0  
-path.py                   10.3.1                   py27_0  
-pathlib2                  2.2.1                    py27_0  
-pcre                      8.39                          1  
-pexpect                   4.2.1                    py27_0  
-pickleshare               0.7.4                    py27_0  
-pip                       9.0.1                    py27_1  
-prompt_toolkit            1.0.14                   py27_0  
-ptyprocess                0.5.1                    py27_0  
-pygments                  2.2.0                    py27_0  
-pylint                    1.7.1                     <pip>
-pyqt                      5.6.0                    py27_2  
-python                    2.7.13                        0  
-python-dateutil           2.6.0                     <pip>
-python-dateutil           2.6.0                    py27_0  
-pytz                      2017.2                    <pip>
-pyzmq                     16.0.2                   py27_0  
-qt                        5.6.2                         4  
-qtconsole                 4.3.0                    py27_0  
-readline                  6.2                           2  
-scandir                   1.5                      py27_0  
-setuptools                27.2.0                   py27_0  
-simplegeneric             0.8.1                    py27_1  
-simplejson                3.10.0                   py27_0  
-singledispatch            3.4.0.3                  py27_0  
-sip                       4.18                     py27_0  
-six                       1.10.0                    <pip>
-six                       1.10.0                   py27_0  
-sqlalchemy                1.1.5                    py27_0    conda-forge
-sqlite                    3.13.0                        0  
-ssl_match_hostname        3.4.0.2                  py27_1  
-terminado                 0.6                      py27_0  
-testpath                  0.3.1                    py27_0  
-tk                        8.5.18                        0  
-tornado                   4.5.1                    py27_0  
-traitlets                 4.3.2                    py27_0  
-wcwidth                   0.1.7                    py27_0  
-werkzeug                  0.12.2                   py27_0  
-wheel                     0.29.0                   py27_0  
-widgetsnbextension        2.0.0                    py27_0  
-wrapt                     1.10.10                   <pip>
-zeromq                    4.1.5                         0  
-zlib                      1.2.8                         3  
-pandas
+aniso8601==3.0.2
+asn1crypto==0.24.0
+backcall==0.1.0
+bleach==2.1.3
+certifi==2018.4.16
+cffi==1.11.5
+chardet==3.0.4
+click==6.7
+colorama==0.3.9
+conda==4.5.5
+cryptography==2.2.2
+Cython==0.28.3
+decorator==4.3.0
+entrypoints==0.2.3
+et-xmlfile==1.0.1
+Flask==1.0.2
+Flask-Cors==3.0.6
+Flask-RESTful==0.3.6
+Flask-SQLAlchemy==2.3.2
+html5lib==1.0.1
+idna==2.6
+ipykernel==4.8.2
+ipython==6.4.0
+ipython-genutils==0.2.0
+ipywidgets==7.2.1
+itsdangerous==0.24
+jdcal==1.4
+jedi==0.12.0
+Jinja2==2.10
+jsonschema==2.6.0
+jupyter==1.0.0
+jupyter-client==5.2.3
+jupyter-console==5.2.0
+jupyter-core==4.4.0
+MarkupSafe==1.0
+menuinst==1.4.14
+mistune==0.8.3
+mkl-fft==1.0.0
+mkl-random==1.0.1
+nbconvert==5.3.1
+nbformat==4.4.0
+notebook==5.5.0
+numpy==1.14.5
+openpyxl==2.5.4
+pandas==0.23.1
+pandocfilters==1.4.2
+parso==0.2.1
+pickleshare==0.7.4
+prompt-toolkit==1.0.15
+psycopg2==2.7.5
+pycosat==0.6.3
+pycparser==2.18
+Pygments==2.2.0
+pyOpenSSL==18.0.0
+PySocks==1.6.8
+python-dateutil==2.7.3
+pytz==2018.5
+pywin32==223
+pywinpty==0.5.4
+pyzmq==17.0.0
+qtconsole==4.3.1
+requests==2.18.4
+ruamel-yaml==0.15.37
+Send2Trash==1.5.0
+simplegeneric==0.8.1
+six==1.11.0
+SQLAlchemy==1.2.9
+terminado==0.8.1
+testpath==0.3.1
+tornado==5.0.2
+traitlets==4.3.2
+urllib3==1.22
+wcwidth==0.1.7
+webencodings==0.5.1
+Werkzeug==0.14.1
+widgetsnbextension==3.2.1
+win-inet-pton==1.0.1
+wincertstore==0.2
+xlrd==1.1.0
