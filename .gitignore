@@ -1,3 +1,7 @@
-/JPENT
-/JPENT2
-/deck2
+node_modules
+jpdash
+venv
+jpdeck
+deck
+git
+*.xlsx
