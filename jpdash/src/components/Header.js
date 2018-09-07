@@ -34,18 +34,22 @@ export default class Header extends Component {
 
 const styles = {
     nav: {
-        width: '90%',
-        height: '60',
+        width: '100%',
+        height: 100,
+        backgroundColor: '#F4F5F7',
+        marginBottom: '10px'
     },
     navUl: {
         display: 'inline',
         listStyle: 'none',
         color : '#FFFFFF',
+        position:'relative',
+        top: 20
     },
     head1: {
-        fontFamily: 'AvenirNext-Bold',
+        fontFamily: 'Roboto',
         display: 'inline',
-        color: '#FFFFFF',
+        color: '#000000',
         fontSize: 36,
     }
 }

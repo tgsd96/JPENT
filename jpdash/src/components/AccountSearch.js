@@ -48,10 +48,11 @@ export default class AccountSearch extends Component {
                         placeholder='Search'
                         value={this.state.searchTerm}
                         onChange={this.handleSearch}
+                        style = {styles.search}
                      />
                 </Row>
                 <Row>
-                    <Table dataSource={this.props.accounts}  columns={Columns} />
+                    <Table pagination={{ pageSize : 10}} dataSource={this.props.accounts}  columns={Columns} />
 
                 </Row>
             </Col>
@@ -65,6 +66,10 @@ const styles = {
         minHeight: 400,
         borderRadius: 10,
         padding: 15,
-        boxShadow: '0 2px 4px 0 rgba(0,0,0,0.50)'
+    },
+    search : {
+        height : 80,
+        marginTop : 10,
+        marginBottom: 10,
     }
 }

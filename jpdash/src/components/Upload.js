@@ -3,6 +3,7 @@ import Uploader from './Uploader';
 import ColSelect from './ColSelect';
 import Result from './Results';
 import Axios from 'axios';
+import moment from 'moment';
 const InitialState ={
     step : 1,
     formData: null,
@@ -11,10 +12,12 @@ const InitialState ={
     filename : null,
     name:null,
     billvalue: null,
-    date:null,
+    date:moment(),
 
 };
 export default class Upload extends Component {
+
+
     state = {
         step : 1,
         formData: null,
@@ -23,7 +26,7 @@ export default class Upload extends Component {
         filename : null,
         name:null,
         billvalue: null,
-        date:null,
+        date:moment(),
 
     }
     nextStep=()=>{
@@ -67,7 +70,7 @@ export default class Upload extends Component {
         
             switch(this.state.step){
                 case 1:
-                    return <Uploader update={this.uploadFormData}/>
+                    return <Uploader update={this.uploadFormData} date={this.state.date}/>
                 case 2:
                     return <ColSelect cols={this.state.keys} selectCols={this.selectCols}/>
                 case 3:

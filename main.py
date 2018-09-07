@@ -56,6 +56,7 @@ class MasterList(db.Model):
     name = db.Column('name',db.String(500),primary_key=True)
     area = db.Column('area',db.String(500),primary_key=True)
     interface_code = db.Column('interface_code',db.String(500),primary_key=True)
+    ts = db.Column('ts',db.DateTime)
 
 class ErrorPurchases(db.Model):
     id = db.Column('id',db.Integer,primary_key=True)
@@ -101,7 +102,10 @@ class uploadFile(Resource):
         filename = conf["filename"]
         val = storeWithPandas(filename, conf)
         return { 'status' : val }
-    
+
+
+## function to get the lists
+
 
 ## download purchases api.
 class DownloadPurchase(Resource):
@@ -134,7 +138,7 @@ class DownloadPurchase(Resource):
             result = db.engine.execute(sql,(dates.startDate,dates.endDate,dates.startDate,dates.endDate))
             for row in result:
                 # print(row.cust_id);
-                getNameQuery = MasterList.query.filter_by(cust_id = row.cust_id).first()
+                getNameQuery = MasterList.query.filter_by(cust_id = row.cust_id).order_by(MasterList.ts ).first()
                 if getNameQuery == None:
                     print(row.cust_id)
                     continue
@@ -235,7 +239,7 @@ class ErrorHandler(Resource):
         newSql = '''
             Insert into master_list(cust_id, name, interface_code)
             select distinct nextval('cust_id'),A.name,A.interface_code from error_purchases A
-            where A.name=%s
+            where A.name=%s 
         '''
         mergeSQL = '''
             Insert into master_list(cust_id, name, interface_code)
@@ -250,9 +254,13 @@ class ErrorHandler(Resource):
         deleteSQL='''
             Delete from error_purchases where name in (select name from master_list)
         '''
+        # addToBalanceSQL = '''
+        #     Insert into Balance_sheet(cust_id) select A.cust_id where name = %s
+        # '''
         for obj in data:
             if(obj['custid']==-1):
                 db.engine.execute(newSql,obj['name'])
+                # db.engine.execute(addToBalanceSQL,obj['name'])
             else:
                 db.engine.execute(mergeSQL,(obj['custid'],obj['name']))
         db.engine.execute(insertSQL)
@@ -270,7 +278,7 @@ class AccountHandler(Resource):
         selectSql = '''
             select  cust_id, name, interface_code from master_list where UPPER(name) like %s order by cust_id
         '''
-        key = name.name.upper()+"%"
+        key =name.name.upper()+"%"
         result = db.engine.execute(selectSql,key)
 
         for row in result:
@@ -337,10 +345,22 @@ class AccountDetails(Resource):
         updatePurchases='''
         update purchases set custid = %s where custid=%s
         '''
+        # updateBalanceSQL = '''
+        #     Delete from Balance_sheet where cust_id = %s
+        # '''
         db.engine.execute(updateSQL,(new_id,old_id))
         db.engine.execute(updatePurchases,(new_id,old_id))
+        # db.session.execute(updateBalanceSQL,old_id)
         db.session.commit()
         return "ok"
+
+
+# Purchases view class
+class ListView(Resource):
+
+    def get(self):
+
+
 
 #api Endpoints
 api.add_resource(uploadFile, '/upload/<company>')

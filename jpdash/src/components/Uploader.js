@@ -47,7 +47,11 @@ export default class Uploader extends Component {
             uploadDate:  dateString,
         })
     }
+    componentWillMount(){
+        this.setState({uploadDate : this.props.date})
+    }
     render() {
+        const { date } = this.props;
         return (
             <Col span={8} style={styles.uploader} className='uploader'>
                 <Row>
@@ -56,7 +60,7 @@ export default class Uploader extends Component {
                     </Col>
                 </Row>
                 <Row>
-                <DatePicker onChange={this.handleDate} />
+                <DatePicker defaultValue={date} onChange={this.handleDate}/>
                 </Row>
                 <Row>
                     <p>Choose Company</p>
@@ -105,11 +109,9 @@ export default class Uploader extends Component {
 const styles = {
     uploader: {
         backgroundColor: '#FFFFFF',
-        height: 600,
+        minheight: 500,
         borderRadius: 12,
         margin: 3,
-        boxShadow: '0 2px 4px 0 rgba(0,0,0,0.50)',
         padding: 10,
-    },
-    
+    },    
 }

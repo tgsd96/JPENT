@@ -11,7 +11,7 @@ export default class BackDrop extends Component {
 }
 
 const style = {
-    backgroundColor: '#3731F0',
+    backgroundColor: 'white',
     position: 'absolute',
     top: 0,
     left: 0,

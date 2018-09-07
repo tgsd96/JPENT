@@ -30,6 +30,7 @@ export default class Downloader extends Component {
         const GET_URL = `http://localhost:5000/download/${this.state.type}?startDate=${this.state.startDate}&endDate=${this.state.endDate}`
         // const result = await axios.get(GET_URL);
         window.open(GET_URL);
+        // const result = await axios.get(GET_URL);
     }
 
     render() {
@@ -75,7 +76,6 @@ const styles = {
         height: 350,
         borderRadius: 12,
         margin: 3,
-        boxShadow: '0 2px 4px 0 rgba(0,0,0,0.50)',
         padding: 10,
     }
 }

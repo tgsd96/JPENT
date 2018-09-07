@@ -73,6 +73,5 @@ const styles = {
         minHeight: 400 ,
         borderRadius: 10,
         padding: 15,
-        boxShadow: '0 2px 4px 0 rgba(0,0,0,0.50)'
     }
 }
