@@ -16,18 +16,19 @@ export default class ErrorCard extends Component {
                     <Col style={styles.wrapper} span={20}>
                     <Row>
                         <h4>{errorData.name}</h4>
-                        <p>{errorData.interface_code}</p>
+                        <p>{errorData.interface_code} | <span style={{color:'#3e3e3e'}}>{errorData.date}</span></p>
                     </Row>
-                    <Row>
+                    {errorData.recommendations.length==0?<div/>:<Row>
                         <p>Recommendations</p>
-                    </Row>
+                    </Row>}
                     <Row>
                         <RadioGroup onChange={this.handleChange}>
                             {errorData.recommendations.map((recom,index)=>{
                                 return(
-                                    <Radio style={styles.radioStyle} value={recom.cust_id} >{recom.name}</Radio>
+                                    <Radio style={styles.radioStyle} value={recom.cust_id} ><b>{recom.name}</b></Radio>
                                 )
                             })}
+                            <Radio style={styles.radioStyle} value={0}>Do not create</Radio>
                             <Radio style={styles.radioStyle} value={-1}>Create New Account</Radio>
                         </RadioGroup>
                     </Row>
@@ -40,13 +41,12 @@ export default class ErrorCard extends Component {
 
 const styles = {
     wrapper : {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 10,
+        backgroundColor: '#F4F5F7',
+        borderRadius: 3,
         // width: '90%',
         margin: 10,
         padding: 15,
-        minHeight: 100,
-        boxShadow: '0 2px 4px 0 rgba(0,0,0,0.50)'
+        minHeight: 100
     },
     radioStyle : {
         display: 'block',

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row,Col,Radio,Upload, Icon, Button, Alert, DatePicker } from 'antd';
+import { Row,Col,Radio,Upload, Icon, Button, Alert, DatePicker, Steps } from 'antd';
 
 const RadioGroup = Radio.Group;
 const Dragger = Upload.Dragger;
@@ -53,17 +53,15 @@ export default class Uploader extends Component {
     render() {
         const { date } = this.props;
         return (
-            <Col span={8} style={styles.uploader} className='uploader'>
+            <Col style={styles.uploader} className='uploader'>
                 <Row>
                     <Col span={12} >
-                        <h3>Upload purchases</h3>
+                        <h3>Upload </h3>
                     </Col>
                 </Row>
+                <br/>
                 <Row>
                 <DatePicker defaultValue={date} onChange={this.handleDate}/>
-                </Row>
-                <Row>
-                    <p>Choose Company</p>
                 </Row>
                 <Row>
                     <RadioGroup onChange={(e)=>this.setState({ selection: e.target.value })}>
@@ -108,10 +106,9 @@ export default class Uploader extends Component {
 
 const styles = {
     uploader: {
-        backgroundColor: '#FFFFFF',
-        minheight: 500,
+        backgroundColor: '#F4F5F7',
+        minHeight: 300,
         borderRadius: 12,
-        margin: 3,
         padding: 10,
     },    
 }

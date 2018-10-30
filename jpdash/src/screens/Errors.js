@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
-import { Row, Col, Button, Icon } from 'antd';
+import { Row, Col, Button, Icon, message } from 'antd';
 import ErrorCard from '../components/ErrorCard';
 
 
@@ -18,12 +18,15 @@ export default class ErrorPage extends Component {
             uploading: false,
         }
     }
-    async componentWillMount(){
+
+    async hitAPI(){
         const resp = await Axios.get(DATA_URL);
         // console.log(resp);
         this.setState({ data: resp.data, total: resp.data.length, selected:0, notSelected:resp.data.length })
         // console.log(this.state);
-
+    }
+    async componentWillMount(){
+        await this.hitAPI();
     }
 
     handleSubmit = async ()=>{
@@ -31,9 +34,12 @@ export default class ErrorPage extends Component {
         try{
             console.log(this.state.selections);
             const resp = await Axios.post( DATA_URL,{ data: this.state.selections });
+            message.success(' Process Completed');
+            await this.hitAPI();
 
         }catch(err){
             console.log(err);
+            message.error('Unable to connect to server, please try again.')
         }
         this.setState({uploading: false})
         this.forceUpdate();
@@ -105,5 +111,6 @@ const styles = {
         boxShadow: '0 2px 4px 0 rgba(0,0,0,0.50)',
         color: 'white',
         padding: 10,
+        margin: 0,
     }
 }

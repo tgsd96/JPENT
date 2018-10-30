@@ -4,6 +4,10 @@ import ColSelect from './ColSelect';
 import Result from './Results';
 import Axios from 'axios';
 import moment from 'moment';
+import { Steps,Row,Col } from 'antd';
+
+const Step = Steps.Step;
+
 const InitialState ={
     step : 1,
     formData: null,
@@ -66,15 +70,34 @@ export default class Upload extends Component {
         this.setState(InitialState);
     }
 
+    renderSwitch(stepNumber){
+        switch(this.state.step){
+            case 1:
+                return <Uploader update={this.uploadFormData} date={this.state.date}/>
+            case 2:
+                return <ColSelect cols={this.state.keys} selectCols={this.selectCols}/>
+            case 3:
+                return <Result successCount={this.state.correct} errorCount={this.state.incorrect} reset={this.reset}/>
+        }
+    }
+
     render() {
-        
-            switch(this.state.step){
-                case 1:
-                    return <Uploader update={this.uploadFormData} date={this.state.date}/>
-                case 2:
-                    return <ColSelect cols={this.state.keys} selectCols={this.selectCols}/>
-                case 3:
-                    return <Result successCount={this.state.correct} errorCount={this.state.incorrect} reset={this.reset}/>
-            }
+        return(
+            <div style={{backgroundColor: '#F4F5F7', padding: 10, borderRadius:3}}>
+            <Row>
+            <Col >
+            {this.renderSwitch(this.state.step)}
+            </Col>
+            </Row>
+            <Row>
+            <Col>
+            <Steps  direction='vertical' current={this.state.step-1}>
+                <Step title = "File Select" />
+                <Step title = "Column Select" />
+                <Step title= "Status report" />
+            </Steps>
+            </Col>
+            </Row>
+            </div>)
     }
 }

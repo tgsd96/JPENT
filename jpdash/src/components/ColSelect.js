@@ -14,7 +14,7 @@ export default class ColSelect extends Component {
     }
     render() {
         return (
-            <Col span={8} style={styles.uploader}>
+            <Col style={styles.uploader}>
             <Row>
                 <h2>Choose <b>Name</b></h2>
                 <RadioGroup  onChange={(e)=>{this.setState({name:e.target.value})}}>
@@ -43,12 +43,10 @@ export default class ColSelect extends Component {
 }
 const styles = {
     uploader: {
-        backgroundColor: '#FFFFFF',
-        height: 600,
-        borderRadius: 12,
-        margin: 3,
-        boxShadow: '0 2px 4px 0 rgba(0,0,0,0.50)',
+        minHeight: 300,
+        borderRadius: 3,
         padding: 10,
+        minWidth: 500,
     },
     radioStyle:{
         display: 'block',

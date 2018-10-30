@@ -10,7 +10,7 @@ export default class Downloader extends Component {
     state = {
         startDate : '',
         endDate : '',
-        type: 'purchases',
+        type: 'pur',
     }
     handleDate = (date,dateString)=>{
 
@@ -38,7 +38,7 @@ export default class Downloader extends Component {
             <Col span={11} style={styles.downloader} className='downloader'>
                 <Row>
                 <Col span={12} >
-                        <h3>Download Purchases</h3>
+                        <h3>Download</h3>
                     </Col>
                 </Row>
                 <Row>

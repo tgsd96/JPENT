@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Home from './screens/Home';
 import ErrorPage from './screens/Errors';
 import Accounts from './screens/Accounts';
+import List from './screens/List';
 import { Route } from 'react-router-dom';
 
 class App extends Component {
@@ -17,6 +18,7 @@ class App extends Component {
         <Route exact path='/' component={Home} />
         <Route path='/errors' component={ErrorPage} />
         <Route path='/accounts' component={Accounts} />
+        <Route path='/list' component={List}/>
       </div>
     );
   }
