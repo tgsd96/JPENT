@@ -32,6 +32,12 @@ export default class Header extends Component {
                             List
                         </Link>
                     </li>
+                    <li>
+                        <Link to="/entry">
+                        <Icon type="" />
+                            Entry
+                        </Link>
+                    </li>
                 </ul>
             </nav>
         );

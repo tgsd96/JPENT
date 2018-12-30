@@ -67,6 +67,12 @@ class ErrorPurchases(db.Model):
     interface_code = db.Column('interface_code',db.String(500))
     name = db.Column('name', db.String(500))
 
+class Ledger(db.Model):
+    id = db.Column('id',db.Integer,primary_key = True)
+    custid = db.Column('cust_id', db.Integer)
+    date = db.Column('date',db.Integer)
+    debit = db.Column('debit',db.Integer)
+    credit = db.Column('credit', db.Integer)
 
 #API classes
 class uploadFile(Resource):
@@ -104,19 +110,12 @@ class uploadFile(Resource):
         return { 'status' : val }
 
 
+
+
 ## function to get the lists
 
-
-## download purchases api.
-class DownloadPurchase(Resource):
-    def get(self,purchase):
-        parser = reqparse.RequestParser()
-        responseList = []
-        parser.add_argument('startDate',type=str)
-        parser.add_argument('endDate',type=str)
-        dates = parser.parse_args()
-        if(purchase=='list'):
-            sql = '''
+def getList(startDate,endDate):
+    sql = '''
                 SELECT COALESCE(S.CUST_ID, BS.CUST_ID) AS CUST_ID, S.cad,S.col,S.god,S.mar,S.marg,S.total, BS.DEBIT AS OLD FROM (
                 SELECT A.*,SUM(B.billvalue) total from (
                 SELECT * 
@@ -135,7 +134,20 @@ class DownloadPurchase(Resource):
                 BALANCE_SHEET BS
                 ON S.CUST_ID = BS.CUST_ID
                 '''
-            result = db.engine.execute(sql,(dates.startDate,dates.endDate,dates.startDate,dates.endDate))
+    result = db.engine.execute(sql,(startDate,endDate,startDate,endDate))
+    return result
+
+
+## download purchases api.
+class DownloadPurchase(Resource):
+    def get(self,purchase):
+        parser = reqparse.RequestParser()
+        responseList = []
+        parser.add_argument('startDate',type=str)
+        parser.add_argument('endDate',type=str)
+        dates = parser.parse_args()
+        if(purchase=='list'):
+            result = getList(dates.startDate,dates.endDate)
             for row in result:
                 # print(row.cust_id);
                 getNameQuery = MasterList.query.filter_by(cust_id = row.cust_id).order_by(MasterList.ts ).first()
@@ -143,9 +155,11 @@ class DownloadPurchase(Resource):
                     print(row.cust_id)
                     continue
                 name = getNameQuery.name
+                cust_id = getNameQuery.cust_id
                 area = getNameQuery.area
                 # print(row['cust_id'])
                 listList = [
+                    cust_id,
                     name,
                     area,
                     row.col,
@@ -160,7 +174,7 @@ class DownloadPurchase(Resource):
             wb = op.Workbook()
             ws1 = wb.active
             ws1.title = "List"
-            ws1.append(['Name','Beat', 'COLGATE', 'MARG', 'GODREJ','MARICO','CADBURY','Total','OLD'])
+            ws1.append(['Customer ID','Name','Beat', 'COLGATE', 'MARG', 'GODREJ','MARICO','CADBURY','Total','OLD'])
             for purchase in responseList:
                 ws1.append(purchase)
             wb.save(filename=DestFileName)
@@ -210,7 +224,7 @@ class ErrorHandler(Resource):
     def get(self):
         ErrorList = []
         sqlGetErrors = '''
-            SELECT distinct name,interface_code
+            SELECT distinct name,interface_code,date
             from error_purchases
         '''
         ErrorNames = db.engine.execute(sqlGetErrors)
@@ -223,12 +237,13 @@ class ErrorHandler(Resource):
             for rrow in recommendations:
                 recomObject={
                     'cust_id':rrow.cust_id,
-                    'name': rrow.name
+                    'name': rrow.name,
                 }
                 recommendationArray.append(recomObject)
             ErrorObject = {
                 'name' : row.name,
                 'interface_code' : row.interface_code,
+                'date':str(row.date),
                 'recommendations' : recommendationArray
             }
             ErrorList.append(ErrorObject)
@@ -254,6 +269,8 @@ class ErrorHandler(Resource):
         deleteSQL='''
             Delete from error_purchases where name in (select name from master_list)
         '''
+
+        removeSQL= '''Delete from error_purchases where name = %s '''
         # addToBalanceSQL = '''
         #     Insert into Balance_sheet(cust_id) select A.cust_id where name = %s
         # '''
@@ -261,6 +278,8 @@ class ErrorHandler(Resource):
             if(obj['custid']==-1):
                 db.engine.execute(newSql,obj['name'])
                 # db.engine.execute(addToBalanceSQL,obj['name'])
+            elif obj['custid']==0:
+                db.engine.execute(removeSQL, obj['name'])
             else:
                 db.engine.execute(mergeSQL,(obj['custid'],obj['name']))
         db.engine.execute(insertSQL)
@@ -357,10 +376,111 @@ class AccountDetails(Resource):
 
 # Purchases view class
 class ListView(Resource):
+    def get(self):
+        result = getList('2018-09-01','2018-09-01')
+        responseList = []
+        for row in result:
+                # print(row.cust_id);
+            getNameQuery = MasterList.query.filter_by(cust_id = row.cust_id).order_by(MasterList.ts ).first()
+            if getNameQuery == None:
+                print(row.cust_id)
+                continue
+            name = getNameQuery.name
+            area = getNameQuery.area
+            cust_id = getNameQuery.cust_id
+            # print(row['cust_id'])
+            listList = {
+                'customer_id': cust_id,
+                'name':name,
+                'area':area,
+                'col':row.col,
+                'marg':row.marg,
+                'god':row.god,
+                'mar':row.mar,
+                'cad':row.cad,
+                'total':row.total,
+                'old':row.old
+            }
+            responseList.append(listList)
+        return responseList
+
+class EntryHandler(Resource):
 
     def get(self):
+        get_sql = '''select * from single_master'''
+        result = db.engine.execute(get_sql)
+        response = []
+        data = {}
+        for row in result:
+            data[row[0]] = row[1]
+            response.append(row[0])
+        data['all'] = response
 
+        return data
+    
+    def post(self):
+        data = request.get_json()['data']
+        # if data['type']=='cheque':
+        insert_to_chq_register(data)
+        print(data)
+        return "ok"
+        # else:
+        #     insert_to_cash_register(data)
+        #     print(data)
+        #     return "ok"
 
+class RegisterHandler(Resource):
+
+    def get(self):
+        sql = '''
+            select * from chq_register order by dateadded
+        '''
+        
+        result = db.engine.execute(sql)
+        
+        response = {}
+        all = []
+
+        for row in result:
+            packet = {
+                'id' : row['id'],
+                'dateadded' : str(row['dateadded']),
+                'type'  : row['type'],
+                'date'  : str(row['dtonchq']),
+                'chqNo'  : row['chqno'],
+                'partyName' : row['partyname'],
+                'uid' : row['partyid'],
+                'amount' : row['amount'],
+                'bank' : row['bank'],
+                'for': row['for_accnt']
+            }
+            all.append(row['id'])
+            response[row['id']] = packet
+        response['all'] = all
+
+        return response
+
+def insert_to_chq_register(data):
+    sql = '''
+        Insert into chq_register(id, dtonchq, dateadded, chqno, partyid, partyname, bank, for_accnt, amount,type )
+        values(%s, %s, %s, %s, %s, %s,%s,%s, %s,%s)    
+    '''
+    if(data['date']==''):
+        data['date'] = None
+    db.engine.execute(sql, 
+    (data['id'], data['date'], data['dateAdded'], data['chqNo'], data['uid'],
+     data['partyName'],data['bank'],data['for'], data['amount'],data['type'] )
+     )
+    return "ok"
+
+def insert_to_cash_register(data):
+    sql='''
+        Insert into cash_register(id, dateadded, partyid, partyname, amount)
+        values(%s,%s,%s,%s,%s)
+    '''
+    db.engine.execute(sql,(data['id'], data['dateAdded'], data['uid'], data['partyName'], data['amount']))
+
+    return "ok"
 
 #api Endpoints
 api.add_resource(uploadFile, '/upload/<company>')
@@ -368,6 +488,9 @@ api.add_resource(DownloadPurchase,'/download/<purchase>')
 api.add_resource(ErrorHandler,'/errors')
 api.add_resource(AccountHandler,'/accounts')
 api.add_resource(AccountDetails,'/accounts/details')
+api.add_resource(ListView,'/list/')
+api.add_resource(EntryHandler,'/parties/')
+api.add_resource(RegisterHandler, '/register/')
 
 # Storing function
 
@@ -389,7 +512,7 @@ def storeWithPandas(filename,conf):
         for row in sheet.itertuples():
             purchases= {}
             purchases['name']=row[conf["name"]+1]
-            purchases['billvalue']=round(row[conf["billvalue"]+1])
+            purchases['billvalue']=round((row[conf["billvalue"]+1]))
             Purch.append(purchases)
         for x in Purch:
                 print(x)

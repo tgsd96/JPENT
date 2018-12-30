@@ -8,6 +8,7 @@ import ErrorPage from './screens/Errors';
 import Accounts from './screens/Accounts';
 import List from './screens/List';
 import { Route } from 'react-router-dom';
+import Entry  from './screens/_Entry';
 
 class App extends Component {
   render() {
@@ -19,6 +20,7 @@ class App extends Component {
         <Route path='/errors' component={ErrorPage} />
         <Route path='/accounts' component={Accounts} />
         <Route path='/list' component={List}/>
+        <Route path='/entry' component={Entry}/>
       </div>
     );
   }
